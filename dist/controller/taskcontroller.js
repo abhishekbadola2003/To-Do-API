@@ -16,7 +16,7 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     console.log(req.body);
     try {
         const task = yield tasks_1.Task.create({
-            // user: req.user.id,
+            user: req.user.id,
             heading,
             description,
             status,

@@ -1,16 +1,22 @@
 import { Request, Response } from "express";
 import { Task } from "../models/tasks";
 
-export const createTask = async (req: any, res: any) => {
-  const { heading, description, status } = req.body;
+export const createTask = async (req: Request, res: Response) => {
+  const { heading, description, status, publishedDate } = req.body;
+  // console.log("Request Body id:", req.body.id);
 
   try {
     const task = await Task.create({
-      user: req.user.id,
+      user: req.body.user.id,
       heading,
       description,
       status,
+      publishedDate,
     });
+    if (!heading || !description || !status || !publishedDate) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    console.log("Decoded Token:", req.body);
 
     res.status(201).json({ message: "Task created successfully", task });
   } catch (error) {
@@ -22,7 +28,7 @@ export const getAllTasks = async (req: Request, res: Response) => {
   try {
     const tasks = await Task.find();
     {
-      user: req.user.id;
+      user: req.body;
     }
     res.json({ tasks });
   } catch (error) {

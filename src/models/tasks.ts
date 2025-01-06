@@ -20,7 +20,7 @@ const tasks = new Schema({
     required: true,
   },
   publishedDate: {
-    type: Date,
+    type: String,
     required: true,
   },
 });

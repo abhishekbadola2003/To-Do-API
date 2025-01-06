@@ -4,6 +4,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const validateUsers = (req: Request, res: Response, next: NextFunction) => {
+  // const authHeader = req.header("Authorization");
+  // console.log("Authorization Header:", authHeader);
+
+  // const token = authHeader?.replace("Bearer ", "");
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
@@ -11,7 +15,9 @@ const validateUsers = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_KEY || "");
-    req.user = decoded;
+    req.body.user = decoded;
+    // console.log(decoded);
+
     next();
   } catch (error) {
     res.status(401).json({ message: "Token is not valid" });

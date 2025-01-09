@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const tasks = new Schema({
-  user: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,

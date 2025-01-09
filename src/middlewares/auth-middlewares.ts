@@ -10,17 +10,24 @@ const validateUsers = (req: Request, res: Response, next: NextFunction) => {
   // const token = authHeader?.replace("Bearer ", "");
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
+    throw new Error("No token, authorization denied");
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_KEY || "");
-    req.body.user = decoded;
-    // console.log(decoded);
+    const decoded = jwt.verify(token, process.env.JWT_KEY || "") as {
+      id: String;
+    };
+    // req.body.user = decoded;
+    req.body.userId = decoded.id;
+    // console.log(req.body.userId);
 
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token is not valid" });
+    res.status(401).json({
+      success: false,
+      message: "Token is not valid",
+      error,
+    });
   }
 };
 

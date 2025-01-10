@@ -8,11 +8,20 @@ import { User } from "../models/user";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   try {
     if (!username || !email || !password) {
       throw new Error("Data is missing"); //extra Error
     }
+
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        success: false,
+        message: "EMAIL INVALID, the email should be in proper syntax",
+      });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       throw new Error("User already exists");

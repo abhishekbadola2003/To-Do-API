@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import { Task } from "../models/tasks";
 import { User } from "src/models/user";
+import { error } from "console";
 
 export const createTask = async (req: Request, res: Response) => {
   const { heading, description, status, publishedDate, userId } = req.body;
   // console.log("Request Body id:", req.body.id);
+  const headingRegex = /^[a-zA-Z0-9 +=:-_]{1,40}$/;
+  const descriptionRegex = /^[a-zA-Z0-9 +=:-]{1,200}$/;
+  const dateRegex = /[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-2]|2[0-9]|3[0-1])$/;
 
   if (!userId) {
     throw new Error("Unauthorized user");
@@ -15,6 +19,34 @@ export const createTask = async (req: Request, res: Response) => {
       message: "All fields are required",
     });
   }
+
+  if (!headingRegex.test(heading)) {
+    res.status(400).json({
+      success: false,
+      message:
+        "HEADING INVALID, the heading should be minimum of single letter and maximum of 20 letters",
+      error,
+    });
+  }
+
+  if (!descriptionRegex.test(description)) {
+    res.status(400).json({
+      success: false,
+      message:
+        "DESCRIPTION INVALID, the heading should be minimum of single letter and maximum of 20 letters",
+      error,
+    });
+  }
+
+  if (!dateRegex.test(publishedDate)) {
+    res.status(400).json({
+      success: false,
+      message:
+        " INVALID DATE FORMAT, the DATE should be in [ YYYY-MM-DD ] format",
+      error,
+    });
+  }
+
   try {
     const task = await Task.create({
       userID: userId,
@@ -138,6 +170,7 @@ export const getUserTaskByHeading = async (req: Request, res: Response) => {
     if (!heading) {
       throw new Error("Heading is required");
     }
+
     const task = await Task.findOne({
       heading,
       userID: userId,

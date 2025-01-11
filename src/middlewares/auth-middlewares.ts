@@ -12,7 +12,7 @@ const validateUsers = (req: Request, res: Response, next: NextFunction) => {
   if (!token) {
     throw new Error("No token, authorization denied");
   }
-
+ 
   try {
     const decoded = jwt.verify(token, process.env.JWT_KEY || "") as {
       id: String;
